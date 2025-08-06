@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MLM DS - Baseball Training App</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -150,15 +150,32 @@
         .ios-sticky-nav {
             position: sticky;
             bottom: 0;
-            z-index: 100;
+            z-index: 1000;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .safe-area-bottom {
             padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        /* iOS navigation enhancement */
+        .ios-nav-button {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .ios-nav-button:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease-in-out;
         }
 
         /* iOS app container adjustments */
@@ -174,6 +191,8 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
     </style>
 </head>
@@ -873,16 +892,20 @@
                                 <button
                                     key={tab.id}
                                     onClick={() => onTabChange(tab.id)}
-                                                                    className={`relative flex flex-col items-center gap-1 transition-all duration-200 ${
-                                    isActive 
-                                        ? 'text-blue-600 transform scale-105' 
-                                        : 'text-gray-400 hover:text-gray-600'
-                                } ${tab.id === 'performance' && isActive ? 'animate-pulse' : ''}`}
+                                    className={`ios-nav-button relative flex flex-col items-center gap-1 transition-all duration-200 ${
+                                        isActive 
+                                            ? 'text-blue-600 transform scale-105' 
+                                            : 'text-gray-400 hover:text-gray-600'
+                                    } ${tab.id === 'performance' && isActive ? 'animate-pulse' : ''}`}
+                                    style={{
+                                        WebkitTapHighlightColor: 'transparent',
+                                        outline: 'none'
+                                    }}
                                 >
                                     <div className="relative">
                                         <div className="w-6 h-6 flex items-center justify-center">{getIcon(tab.icon, isActive)}</div>
                                     </div>
-                                    <span className="text-xs font-medium">{tab.label}</span>
+                                    <span className="text-xs font-medium font-barlow">{tab.label}</span>
                                     {isActive && (
                                         <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-blue-600 rounded-full" />
                                     )}
