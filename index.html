@@ -56,19 +56,22 @@
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px 0;
             background: #f5f7fa;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .mobile-app {
-            width: 100%;
-            max-width: 414px;
+            width: 390px;
+            height: 844px;
             margin: 0 auto;
-            min-height: 100vh;
             background: white;
             position: relative;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         
         .glass-effect {
@@ -148,8 +151,10 @@
 
         /* iOS-style sticky navigation */
         .ios-sticky-nav {
-            position: sticky;
+            position: absolute;
             bottom: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -180,7 +185,8 @@
 
         /* iOS app container adjustments */
         .ios-app-container {
-            min-height: 100vh;
+            width: 390px;
+            height: 844px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -193,6 +199,7 @@
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
             scroll-behavior: smooth;
+            padding-bottom: 100px;
         }
     </style>
 </head>
