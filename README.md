@@ -20,10 +20,10 @@ A comprehensive mobile application for baseball training with practice drills, p
   - Game Situations (5 steps)
 
 ### 📱 **Mobile-First Design**
-- **iPhone 13-14 Mockup**: Realistic device frame
+- **Clean Mobile Layout**: Full viewport responsive design
 - **iOS-style Navigation**: Sticky bottom nav with blur effects
 - **Horizontal Scrolling**: Smooth card-based interactions
-- **Responsive Layout**: Optimized for mobile viewing
+- **Responsive Layout**: Optimized for mobile and desktop viewing
 
 ## Technology Stack
 
