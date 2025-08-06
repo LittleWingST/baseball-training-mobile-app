@@ -762,10 +762,6 @@
                     </div>
                     
                     <div className="flex flex-col gap-2">
-                        <span className="text-gray-500 text-xs font-medium uppercase tracking-wide font-barlow">
-                            Participants ({session.participants.length})
-                        </span>
-                        
                         <div className="flex gap-2 overflow-x-auto">
                             {session.participants.map((participant, index) => {
                                 const initials = participant.split(' ').map(n => n[0]).join('');
@@ -1551,7 +1547,6 @@
                             <section className="pl-5 pr-0 pt-5 flex flex-col gap-3 section-container relative">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-neutral-900 text-base font-medium font-barlow">Recommended Practice</h2>
-                                    <button className="text-blue-600 text-sm font-medium btn-hover">View All</button>
                                 </div>
                                 <div className="flex gap-3 overflow-x-auto pb-2 horizontal-scroll scroll-container pr-5">
                                 {drills.map((drill) => (
@@ -1565,7 +1560,6 @@
                             <section className="pl-5 pr-0 pt-5 flex flex-col gap-3 section-container relative">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-neutral-900 text-base font-medium font-barlow">Recent Sessions</h2>
-                                    <button className="text-blue-600 text-sm font-medium btn-hover">View All</button>
                                 </div>
                                 <div className="flex gap-3 overflow-x-auto pb-2 horizontal-scroll scroll-container pr-5">
                                 {sessions.map((session) => (
