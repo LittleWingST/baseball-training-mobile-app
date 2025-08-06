@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLM DS - Baseball Training App</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'roboto': ['Roboto', 'sans-serif'],
+                        'roboto-condensed': ['Roboto Condensed', 'sans-serif'],
+                        'barlow': ['Barlow', 'sans-serif'],
+                        'acumin': ['Inter', 'sans-serif'],
+                    },
+                    fontWeight: {
+                        'thin': '100',
+                        'extralight': '200',
+                        'light': '300',
+                        'normal': '400',
+                        'medium': '500',
+                        'semibold': '600',
+                        'bold': '700',
+                        'extrabold': '800',
+                        'black': '900',
+                    },
+                    colors: {
+                        neutral: {
+                            100: '#f5f5f5',
+                            400: '#a3a3a3',
+                            800: '#262626',
+                            900: '#171717',
+                            950: '#0a0a0a',
+                        },
+                        indigo: {
+                            400: '#818cf8',
+                            500: '#6366f1',
+                        },
+                        amber: {
+                            300: '#fcd34d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* iPhone 13-14 Mockup Frame */
+        .iphone-mockup {
+            width: 430px;
+            height: 932px;
+            background: #1a1a1a;
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: 
+                0 0 0 2px #2a2a2a,
+                0 0 0 6px #1a1a1a,
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .iphone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .iphone-mockup::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            z-index: 11;
+        }
+
+        .iphone-screen {
+            width: 414px;
+            height: 916px;
+            background: #000;
+            border-radius: 44px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .mobile-app {
+            width: 414px;
+            height: 916px;
+            margin: 0 auto;
+            overflow: hidden;
+            background: white;
+            position: relative;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .italic {
+            font-style: italic;
+        }
+        .btn-hover {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn-hover:hover {
+            transform: translateY(-1px);
+        }
+        
+        .chart-bar {
+            animation: growUp 0.8s ease-out;
+            transform-origin: bottom;
+        }
+        
+        @keyframes growUp {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+        
+        .loading-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        
+        /* Horizontal scrolling styles */
+        .horizontal-scroll {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scroll-container {
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+        }
+        
+        .scroll-item {
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+        
+        /* Swipe indicators */
+        .swipe-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .section-container:hover .swipe-indicator {
+            opacity: 1;
+        }
+
+        /* iOS-style sticky navigation */
+        .ios-sticky-nav {
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        /* iOS app container adjustments */
+        .ios-app-container {
+            height: 100vh;
+            max-height: 916px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ios-content-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-mockup">
+        <div class="iphone-screen">
+            <div id="root"></div>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // StatusBar Component (iOS Style)
+        const StatusBar = () => {
+            const [currentTime, setCurrentTime] = useState('');
+
+            useEffect(() => {
+                const updateTime = () => {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('en-US', { 
+                        hour: 'numeric', 
+                        minute: '2-digit',
+                        hour12: true 
+                    });
+                    setCurrentTime(timeString);
+                };
+
+                updateTime();
+                const interval = setInterval(updateTime, 1000);
+                return () => clearInterval(interval);
+            }, []);
+
+            return (
+                <header className="relative h-11 w-full overflow-hidden">
+                    <div className="absolute inset-0 flex items-center justify-between px-6 pt-2">
+                        {/* Left side - Time */}
+                        <div className="text-white text-base font-medium">
+                            {currentTime || '9:41 AM'}
+                        </div>
+                        
+                        {/* Right side - Status indicators */}
+                        <div className="flex items-center gap-1.5">
+                            {/* Signal bars */}
+                            <div className="flex items-end gap-0.5">
+                                {[1, 2, 3, 4].map((height, index) => (
+                                    <div 
+                                        key={index}
+                                        className="w-1 bg-white rounded-full"
+                                        style={{ height: `${2 + height * 1.5}px` }}
+                                    />
+                                ))}
+                            </div>
+                            
+                            {/* WiFi icon */}
+                            <div className="w-4 h-4 flex items-center justify-center">
+                                <img 
+                                    src="public/icons/device connection.png" 
+                                    alt="WiFi" 
+                                    width="15" 
+                                    height="11" 
+                                />
+                            </div>
+                            
+                            {/* Battery */}
+                            <div className="flex items-center gap-1">
+                                <div className="text-white text-sm font-light">100%</div>
+                                <div className="w-6 h-3 relative">
+                                    {/* Battery outline */}
+                                    <div className="w-full h-full border border-white rounded-sm bg-transparent"></div>
+                                    {/* Battery fill */}
+                                    <div className="absolute top-0.5 left-0.5 w-4 h-1.5 bg-white rounded-[1px]"></div>
+                                    {/* Battery tip */}
+                                    <div className="absolute -right-0.5 top-1 w-0.5 h-1 bg-white rounded-r-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            );
+        };
+
+        // DeviceHeader Component
+        const DeviceHeader = () => {
+            const [isConnected, setIsConnected] = useState(true);
+
+            return (
+                <div className="flex justify-between items-center px-5 py-3">
+                    <button className="w-11 h-11 flex items-center justify-center btn-hover">
+                        <img 
+                            src="public/icons/settings.png" 
+                            alt="Settings" 
+                            width="24" 
+                            height="24" 
+                        />
+                    </button>
+                    
+                    <div className="flex items-center">
+                        <img 
+                            src="public/icons/device connection.png" 
+                            alt="Device Connection" 
+                            width="24" 
+                            height="24" 
+                        />
+                    </div>
+                </div>
+            );
+        };
+
+        // PlayerProfile Component
+        const PlayerProfile = ({ player }) => {
+            return (
+                <div className="flex flex-col items-center gap-5 pb-6">
+                    <div className="w-40 flex flex-col items-center gap-3">
+                        <div className="relative">
+                            <img 
+                                className="w-36 h-36 rounded-full border-4 border-white object-cover object-top shadow-lg transition-transform duration-300 hover:scale-105" 
+                                src={player.avatar} 
+                                alt={player.name}
+                            />
+                            <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
+                                <div className="w-2 h-2 bg-white rounded-full loading-pulse" />
+                            </div>
+                        </div>
+                        
+                        <div className="text-center">
+                            <h1 className="text-white text-3xl font-extrabold uppercase tracking-wide font-roboto-condensed">
+                                {player.name}
+                            </h1>
+                            <p className="text-white/90 text-sm font-light uppercase tracking-wide font-barlow mt-1">
+                                {player.position}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-5 w-full max-w-sm">
+                        <div className="flex flex-col items-center gap-2 text-center">
+                            <span className="text-white/80  text-xs font-light uppercase tracking-wide font-barlow">
+                                Hit Counter
+                            </span>
+                            <div className="flex flex-col items-center">
+                                <span className="text-white italic text-3xl font-black uppercase font-roboto leading-tight">
+                                    {player.hitCounter.toLocaleString()}
+                                </span>
+                                <span className="text-white/70 text-xs font-extralight font-barlow">
+                                    swings
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col items-center gap-2 text-center">
+                            <span className="text-white/80 text-xs font-light uppercase tracking-wide font-barlow">
+                                Swing Streak
+                            </span>
+                            <div className="flex flex-col items-center">
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-white text-3xl font-black uppercase font-roboto leading-tight">
+                                        {player.swingStreak}
+                                    </span>
+                                
+                                </div>
+                                <span className="text-white/70 text-xs font-medium font-barlow">
+                                    days
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col items-center gap-2 text-center">
+                            <span className="text-white/80 text-xs font-semibold uppercase tracking-wide font-barlow">
+                                Bat/Throw
+                            </span>
+                            <span className="text-white text-3xl font-bold uppercase font-roboto leading-tight">
+                                {player.batThrow}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div className="w-20 h-0.5 bg-white/40 overflow-hidden">
+                        <div className="h-full bg-white w-3/4 transition-all duration-1000 ease-out" />
+                    </div>
+                </div>
+            );
+        };
+
+        // QuickStats Component
+        const QuickStats = ({ stats, onViewAll }) => {
+            return (
+                <section style={{
+                    display: 'flex',
+                    padding: '20px 20px 0 20px',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    alignSelf: 'stretch'
+                }}>
+                    <div className="flex justify-between items-center w-full">
+                        <h2 className="text-neutral-900 text-base font-semibold font-acumin">Quick Stats</h2>
+                        <button 
+                            onClick={onViewAll}
+                            className="text-blue-600 text-sm font-light btn-hover ml-auto"
+                        >
+                            View All
+                        </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-4 gap-2">
+                        {stats.map((stat, index) => {
+                            const getColor = (value, unit, label) => {
+                                let percentage;
+                                
+                                if (unit === '%') {
+                                    percentage = value;
+                                } else if (unit === '°') {
+                                    // Launch angle: optimal range is 15-35 degrees, ideal around 20-30
+                                    if (value >= 15 && value <= 35) {
+                                        percentage = value >= 20 && value <= 30 ? 100 : 80;
+                                    } else {
+                                        percentage = Math.max(0, 100 - Math.abs(value - 25) * 4);
+                                    }
+                                } else {
+                                    percentage = Math.min(100, (value / 100) * 100);
+                                }
+                                
+                                if (percentage >= 80) return 'from-green-500 to-green-600';
+                                if (percentage >= 60) return 'from-yellow-500 to-yellow-600';
+                                return 'from-red-500 to-red-600';
+                            };
+
+                            const getPerformanceLevel = (value, unit, label) => {
+                                let percentage;
+                                
+                                if (unit === '%') {
+                                    percentage = value;
+                                } else if (unit === '°') {
+                                    // Launch angle performance calculation
+                                    if (value >= 15 && value <= 35) {
+                                        percentage = value >= 20 && value <= 30 ? 100 : 80;
+                                    } else {
+                                        percentage = Math.max(0, 100 - Math.abs(value - 25) * 4);
+                                    }
+                                } else {
+                                    percentage = Math.min(100, (value / 100) * 100);
+                                }
+                                
+                                if (percentage >= 80) return { level: 'Excellent', color: 'text-green-600' };
+                                if (percentage >= 60) return { level: 'Good', color: 'text-yellow-600' };
+                                return { level: 'Needs Work', color: 'text-red-600' };
+                            };
+
+                            const performance = getPerformanceLevel(stat.value, stat.unit, stat.label);
+                            
+                            // Calculate progress percentage for each metric type
+                            let progressPercentage;
+                            if (stat.unit === '%') {
+                                progressPercentage = stat.value;
+                            } else if (stat.unit === '°') {
+                                // Launch angle progress
+                                if (stat.value >= 15 && stat.value <= 35) {
+                                    progressPercentage = stat.value >= 20 && stat.value <= 30 ? 100 : 80;
+                                } else {
+                                    progressPercentage = Math.max(0, 100 - Math.abs(stat.value - 25) * 4);
+                                }
+                            } else {
+                                progressPercentage = Math.min(100, (stat.value / 100) * 100);
+                            }
+
+                            return (
+                                <div 
+                                    key={index}
+                                    className="relative p-2 bg-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 btn-hover"
+                                    style={{ animationDelay: `${index * 150}ms` }}
+                                >
+                                    <div className="flex flex-col gap-2">
+                                        {/* Header */}
+                                        <div className="flex items-center">
+                                            <span className="text-gray-500 text-[10px] font-light uppercase tracking-wide font-acumin truncate">
+                                                {stat.label}
+                                            </span>
+                                        </div>
+                                        
+                                        {/* Value */}
+                                        <div className="flex items-baseline justify-start gap-1">
+                                            <span className="text-neutral-900 text-lg font-extrabold uppercase font-acumin leading-none">
+                                                {stat.value}
+                                            </span>
+                                            <span className="text-gray-500 text-[10px] font-thin uppercase tracking-wide font-acumin">
+                                                {stat.unit}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Colored vertical line indicator */}
+                                    <div className={`absolute top-0 right-0 w-1 h-full ${
+                                        progressPercentage >= 80 ? 'bg-green-500' :
+                                        progressPercentage >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                                    }`} />
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                </section>
+            );
+        };
+
+        // WeeklyActivity Component
+        const WeeklyActivity = ({ data }) => {
+            const [selectedDay, setSelectedDay] = useState(null);
+            const maxValue = Math.max(...data.map(d => d.value));
+
+            return (
+                <section className="px-5 pt-5 flex flex-col gap-3">
+                    <h2 className="text-neutral-900 text-base font-semibold font-barlow">Weekly Activity</h2>
+                    
+                    <div className="px-4 py-4 bg-white shadow-lg flex flex-col gap-6">
+                        <div className="flex justify-between items-start">
+                            <div className="flex-1 flex flex-col gap-3">
+                                <span className="text-gray-500 text-sm font-light font-barlow">Daily Swing Goal</span>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 bg-blue-500/10 flex items-center justify-center">
+                                        <div className="w-3 h-3 bg-blue-500" />
+                                    </div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-gray-900 text-2xl font-black uppercase font-roboto">120</span>
+                                        <span className="text-gray-400 text-lg font-light uppercase font-roboto">/ 150</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button className="flex items-center gap-2 text-blue-600 text-xs font-semibold uppercase tracking-wide font-barlow btn-hover px-3 py-1">
+                                View All →
+                            </button>
+                        </div>
+                        
+                        <div className="flex justify-between items-end gap-2 h-24">
+                            {data.map((day, index) => {
+                                const height = Math.max(8, (day.value / maxValue) * 80);
+                                const isSelected = selectedDay === day.shortDay;
+                                
+                                return (
+                                    <button
+                                        key={index}
+                                        onClick={() => setSelectedDay(isSelected ? null : day.shortDay)}
+                                        className={`flex flex-col items-center gap-1 transition-all duration-300 hover:transform hover:scale-105 ${
+                                            isSelected ? 'scale-105' : ''
+                                        }`}
+                                    >
+                                        <div 
+                                            className={`w-4 bg-gradient-to-t transition-all duration-500 chart-bar ${
+                                                isSelected 
+                                                    ? 'from-blue-500 to-blue-400 shadow-lg' 
+                                                    : 'from-neutral-800 to-neutral-700 hover:from-neutral-700 hover:to-neutral-600'
+                                            }`}
+                                            style={{ height: `${height}px` }}
+                                        />
+                                        
+                                        <div className="w-1 h-1 bg-white" />
+                                        <span className={`text-xs font-semibold uppercase text-center font-barlow transition-colors duration-200 ${
+                                            isSelected ? 'text-blue-600' : 'text-stone-900'
+                                        }`}>
+                                            {day.value}
+                                        </span>
+                                        <span className={`text-xs font-semibold uppercase text-center font-barlow transition-colors duration-200 ${
+                                            isSelected ? 'text-blue-500' : 'text-gray-400'
+                                        }`}>
+                                            {day.shortDay}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        
+                        <div className="flex flex-col gap-3 pt-2 border-t border-gray-100">
+                            <div className="flex gap-0 h-2 overflow-hidden">
+                                <div className="bg-indigo-400 h-full" style={{ flex: '0.68' }} />
+                                <div className="bg-amber-300 h-full" style={{ flex: '0.32' }} />
+                            </div>
+                            
+                            <div className="flex justify-center items-center gap-6">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-indigo-400" />
+                                    <span className="text-gray-500 text-sm font-semibold uppercase tracking-wide font-barlow">
+                                        68% Training
+                                    </span>
+                                </div>
+                                
+                                <div className="w-1 h-1 bg-gray-300" />
+                                
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-amber-300" />
+                                    <span className="text-gray-500 text-sm font-semibold uppercase tracking-wide font-barlow">
+                                        32% Gaming
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // DrillCard Component
+        const DrillCard = ({ drill }) => {
+            const getDifficultyColor = (difficulty) => {
+                switch (difficulty.toLowerCase()) {
+                    case 'beginner':
+                        return 'text-green-600 bg-green-100';
+                    case 'intermediate':
+                        return 'text-yellow-600 bg-yellow-100';
+                    case 'advanced':
+                        return 'text-red-600 bg-red-100';
+                    default:
+                        return 'text-gray-600 bg-gray-100';
+                }
+            };
+
+            const getDifficultyIcon = (difficulty) => {
+                // Stars removed from difficulty indicator
+                return '';
+            };
+
+            return (
+                <div className="w-72 h-[120px] bg-white shadow-lg flex gap-3 overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-102 btn-hover scroll-item">
+                    <div className="relative w-28 h-32 overflow-hidden">
+                        <img 
+                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110" 
+                            src={drill.image} 
+                            alt={drill.title}
+                        />
+
+                    </div>
+                    
+                    <div className="flex-1 p-3 flex flex-col justify-between gap-2">
+                        <div className="flex flex-col gap-2">
+                            <div className="flex justify-between items-start">
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-gray-500 text-xs font-medium uppercase tracking-wide font-barlow">
+                                        DRILL
+                                    </span>
+                                    <h3 className="text-neutral-900 text-base font-semibold font-barlow leading-tight">
+                                        {drill.title}
+                                    </h3>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-blue-500" />
+                                <span className="text-gray-600 text-sm font-medium font-barlow">
+                                    {drill.category}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                                <div className={`w-4 h-4 flex items-center justify-center text-xs ${getDifficultyColor(drill.difficulty)}`}>
+                                    <div className="w-2 h-2 bg-current" />
+                                </div>
+                                <span className="text-gray-600 text-xs font-medium font-barlow">
+                                    {drill.difficulty}
+                                </span>
+                            </div>
+                            
+                            <div className="flex items-center gap-1">
+                                <img 
+                                    src="public/icons/Clock Icon.png" 
+                                    alt="Duration" 
+                                    width="12" 
+                                    height="12" 
+                                />
+                                <span className="text-gray-600 text-xs font-medium font-barlow">
+                                    {drill.duration}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // SessionCard Component
+        const SessionCard = ({ session }) => {
+            const getSessionTypeIcon = (title) => {
+                if (title.toLowerCase().includes('practice')) {
+                    return (
+                        <img 
+                            src="public/icons/practice.png" 
+                            alt="Practice" 
+                            width="24" 
+                            height="24" 
+                        />
+                    );
+                }
+                if (title.toLowerCase().includes('velocity')) {
+                    return (
+                        <img 
+                            src="public/icons/performance.png" 
+                            alt="Velocity" 
+                            width="24" 
+                            height="24" 
+                        />
+                    );
+                }
+                if (title.toLowerCase().includes('scrimmage')) {
+                    return (
+                        <img 
+                            src="public/icons/game.png" 
+                            alt="Scrimmage" 
+                            width="24" 
+                            height="24" 
+                        />
+                    );
+                }
+                if (title.toLowerCase().includes('batting')) {
+                    return (
+                        <img 
+                            src="public/icons/practice.png" 
+                            alt="Batting" 
+                            width="24" 
+                            height="24" 
+                        />
+                    );
+                }
+                return (
+                    <img 
+                        src="public/icons/home.png" 
+                        alt="Session" 
+                        width="24" 
+                        height="24" 
+                    />
+                );
+            };
+
+            const getSessionTypeColor = (title) => {
+                if (title.toLowerCase().includes('practice')) return 'bg-blue-100 text-blue-600';
+                if (title.toLowerCase().includes('velocity')) return 'bg-yellow-100 text-yellow-600';
+                if (title.toLowerCase().includes('scrimmage')) return 'bg-green-100 text-green-600';
+                if (title.toLowerCase().includes('batting')) return 'bg-purple-100 text-purple-600';
+                return 'bg-gray-100 text-gray-600';
+            };
+
+            return (
+                <div className="w-80 p-4 bg-white shadow-lg flex flex-col gap-4 overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-102 btn-hover scroll-item">
+                    <div className="flex justify-between items-start gap-3">
+                        <div className="flex-1 flex items-start gap-3">
+                            <div className={`w-12 h-12 flex items-center justify-center text-xl ${getSessionTypeColor(session.title)}`}>
+                                {getSessionTypeIcon(session.title)}
+                            </div>
+                            
+                            <div className="flex-1">
+                                <h3 className="text-neutral-900 text-base font-semibold font-barlow leading-tight">
+                                    {session.title}
+                                </h3>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <div className="w-2 h-2 bg-green-500 loading-pulse" />
+                                    <span className="text-green-600 text-xs font-medium">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="text-right">
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-neutral-900 text-3xl font-bold uppercase font-roboto leading-none">
+                                    {session.swings}
+                                </span>
+                            </div>
+                            <span className="text-gray-500 text-xs font-medium uppercase font-barlow">
+                                swings
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2">
+                        <span className="text-gray-500 text-xs font-medium uppercase tracking-wide font-barlow">
+                            Participants ({session.participants.length})
+                        </span>
+                        
+                        <div className="flex gap-2 overflow-x-auto">
+                            {session.participants.map((participant, index) => {
+                                const initials = participant.split(' ').map(n => n[0]).join('');
+                                const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500'];
+                                
+                                return (
+                                    <div key={index} className="flex flex-col items-center gap-1 min-w-fit">
+                                        <div className={`w-10 h-10 rounded-full ${colors[index % colors.length]} flex items-center justify-center text-white text-sm font-semibold shadow-sm`}>
+                                            {initials}
+                                        </div>
+                                        <span className="text-gray-600 text-xs font-medium text-center font-barlow whitespace-nowrap">
+                                            {participant}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
+                                <img 
+                                    src="public/icons/Calendar Icon.png" 
+                                    alt="Date" 
+                                    width="14" 
+                                    height="14" 
+                                />
+                                <span className="text-gray-600 text-xs font-medium font-barlow">
+                                    {session.date}
+                                </span>
+                            </div>
+                            
+                            <div className="w-1 h-1 bg-gray-300" />
+                            
+                            <div className="flex items-center gap-1">
+                                <img 
+                                    src="public/icons/Clock Icon.png" 
+                                    alt="Duration" 
+                                    width="14" 
+                                    height="14" 
+                                />
+                                <span className="text-gray-600 text-xs font-medium font-barlow">
+                                    {session.duration}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <button className="text-blue-600 text-xs font-semibold hover:text-blue-700 transition-colors duration-200">
+                            Details →
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+
+
+        // BottomNavigation Component
+        const BottomNavigation = ({ activeTab, onTabChange }) => {
+            const getIcon = (iconName, isActive) => {
+                const opacity = isActive ? 1 : 0.6;
+                
+                switch(iconName) {
+                    case 'home':
+                        return (
+                            <img 
+                                src="public/icons/home.png" 
+                                alt="Home" 
+                                width="24" 
+                                height="24" 
+                                style={{ opacity }}
+                            />
+                        );
+                    case 'practice':
+                        return (
+                            <img 
+                                src="public/icons/practice.png" 
+                                alt="Practice" 
+                                width="24" 
+                                height="24" 
+                                style={{ opacity }}
+                            />
+                        );
+                    case 'games':
+                        return (
+                            <img 
+                                src="public/icons/game.png" 
+                                alt="Games" 
+                                width="24" 
+                                height="24" 
+                                style={{ opacity }}
+                            />
+                        );
+                    case 'performance':
+                        return (
+                            <img 
+                                src="public/icons/performance.png" 
+                                alt="Performance" 
+                                width="24" 
+                                height="24" 
+                                style={{ opacity }}
+                            />
+                        );
+                    default:
+                        return null;
+                }
+            };
+
+            const tabs = [
+                { id: 'home', label: 'Home', icon: 'home' },
+                { id: 'practice', label: 'Practice', icon: 'practice' },
+                { id: 'games', label: 'Games', icon: 'games' },
+                { id: 'performance', label: 'Performance', icon: 'performance' },
+            ];
+
+            return (
+                <nav className="bg-white border-t border-neutral-100">
+                    <div className="flex justify-center items-center gap-8 px-6 py-3">
+                        {tabs.map((tab) => {
+                            const isActive = activeTab === tab.id;
+                            
+                            return (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => onTabChange(tab.id)}
+                                                                    className={`relative flex flex-col items-center gap-1 transition-all duration-200 ${
+                                    isActive 
+                                        ? 'text-blue-600 transform scale-105' 
+                                        : 'text-gray-400 hover:text-gray-600'
+                                } ${tab.id === 'performance' && isActive ? 'animate-pulse' : ''}`}
+                                >
+                                    <div className="relative">
+                                        <div className="w-6 h-6 flex items-center justify-center">{getIcon(tab.icon, isActive)}</div>
+                                    </div>
+                                    <span className="text-xs font-medium">{tab.label}</span>
+                                    {isActive && (
+                                        <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-blue-600 rounded-full" />
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    
+                    <div className="p-2.5 flex justify-center">
+                        <div className="w-36 h-1 bg-stone-900 rounded-xl" />
+                    </div>
+                </nav>
+            );
+        };
+
+        // Practice Page Component
+        const PracticePage = () => {
+            const [activeSegment, setActiveSegment] = useState('drills');
+            
+            const practiceData = [
+                {
+                    id: "1",
+                    title: "Launch Angle",
+                    category: "Tee Work",
+                    description: "Game Situations",
+                    difficulty: "Beginner",
+                    duration: "15 min",
+                    image: "https://placehold.co/120x122"
+                },
+                {
+                    id: "2", 
+                    title: "Game Sim Challenge",
+                    category: "Tee Work",
+                    description: "Game Situations",
+                    difficulty: "Beginner",
+                    duration: "15 min",
+                    image: "https://placehold.co/120x122"
+                },
+                {
+                    id: "3",
+                    title: "Power Builder",
+                    category: "Tee Work", 
+                    description: "Game Situations",
+                    difficulty: "Beginner",
+                    duration: "15 min",
+                    image: "https://placehold.co/120x122"
+                }
+            ];
+
+            const laddersData = [
+                {
+                    id: "ladder1",
+                    title: "Hitting Fundamentals",
+                    description: "Master the basics of batting stance to contact",
+                    totalSteps: 5,
+                    currentStep: 2,
+                    completed: false,
+                    category: "Batting",
+                    estimatedTime: "45 min",
+                    steps: [
+                        { 
+                            step: 1, 
+                            title: "Stance & Grip", 
+                            description: "Proper batting stance and bat grip fundamentals",
+                            completed: true, 
+                            locked: false,
+                            duration: "8 min"
+                        },
+                        { 
+                            step: 2, 
+                            title: "Load & Stride", 
+                            description: "Loading phase and stride mechanics",
+                            completed: true, 
+                            locked: false,
+                            duration: "10 min"
+                        },
+                        { 
+                            step: 3, 
+                            title: "Swing Path", 
+                            description: "Optimal swing plane and bat path through zone",
+                            completed: false, 
+                            locked: false,
+                            duration: "12 min"
+                        },
+                        { 
+                            step: 4, 
+                            title: "Contact Point", 
+                            description: "Finding the ideal contact point for power",
+                            completed: false, 
+                            locked: true,
+                            duration: "10 min"
+                        },
+                        { 
+                            step: 5, 
+                            title: "Follow Through", 
+                            description: "Complete swing mechanics and finish",
+                            completed: false, 
+                            locked: true,
+                            duration: "5 min"
+                        }
+                    ],
+                    image: "https://placehold.co/120x122"
+                },
+                {
+                    id: "ladder2", 
+                    title: "Power Development",
+                    description: "Build explosive bat speed and exit velocity",
+                    totalSteps: 4,
+                    currentStep: 0,
+                    completed: false,
+                    category: "Strength",
+                    estimatedTime: "35 min",
+                    steps: [
+                        { 
+                            step: 1, 
+                            title: "Core Rotation", 
+                            description: "Develop rotational power from the core",
+                            completed: false, 
+                            locked: false,
+                            duration: "10 min"
+                        },
+                        { 
+                            step: 2, 
+                            title: "Hip Drive", 
+                            description: "Generate power through hip rotation",
+                            completed: false, 
+                            locked: true,
+                            duration: "8 min"
+                        },
+                        { 
+                            step: 3, 
+                            title: "Barrel Control", 
+                            description: "Maintain barrel control while generating power",
+                            completed: false, 
+                            locked: true,
+                            duration: "12 min"
+                        },
+                        { 
+                            step: 4, 
+                            title: "Launch Angle Mastery", 
+                            description: "Optimize launch angle for maximum distance",
+                            completed: false, 
+                            locked: true,
+                            duration: "5 min"
+                        }
+                    ],
+                    image: "https://placehold.co/120x122"
+                },
+                {
+                    id: "ladder3",
+                    title: "Plate Discipline",
+                    description: "Develop pitch recognition and strike zone awareness",
+                    totalSteps: 6,
+                    currentStep: 1,
+                    completed: false,
+                    category: "Mental",
+                    estimatedTime: "50 min",
+                    steps: [
+                        { 
+                            step: 1, 
+                            title: "Strike Zone", 
+                            description: "Learn and visualize the strike zone",
+                            completed: true, 
+                            locked: false,
+                            duration: "8 min"
+                        },
+                        { 
+                            step: 2, 
+                            title: "Ball vs Strike", 
+                            description: "Quick recognition of balls and strikes",
+                            completed: false, 
+                            locked: false,
+                            duration: "10 min"
+                        },
+                        { 
+                            step: 3, 
+                            title: "Pitch Types", 
+                            description: "Identify fastball, curve, slider, changeup",
+                            completed: false, 
+                            locked: true,
+                            duration: "12 min"
+                        },
+                        { 
+                            step: 4, 
+                            title: "Count Recognition", 
+                            description: "Adjust approach based on count",
+                            completed: false, 
+                            locked: true,
+                            duration: "8 min"
+                        },
+                        { 
+                            step: 5, 
+                            title: "Two-Strike Approach", 
+                            description: "Defensive hitting with two strikes",
+                            completed: false, 
+                            locked: true,
+                            duration: "7 min"
+                        },
+                        { 
+                            step: 6, 
+                            title: "Advanced Recognition", 
+                            description: "Advanced pitch sequencing and timing",
+                            completed: false, 
+                            locked: true,
+                            duration: "5 min"
+                        }
+                    ],
+                    image: "https://placehold.co/120x122"
+                },
+                {
+                    id: "ladder4",
+                    title: "Game Situations",
+                    description: "Master hitting in real game scenarios",
+                    totalSteps: 5,
+                    currentStep: 0,
+                    completed: false,
+                    category: "Situational",
+                    estimatedTime: "40 min",
+                    steps: [
+                        { 
+                            step: 1, 
+                            title: "Hit & Run", 
+                            description: "Execute hit and run situations",
+                            completed: false, 
+                            locked: false,
+                            duration: "8 min"
+                        },
+                        { 
+                            step: 2, 
+                            title: "Moving Runners", 
+                            description: "Hit behind the runner and advance bases",
+                            completed: false, 
+                            locked: true,
+                            duration: "10 min"
+                        },
+                        { 
+                            step: 3, 
+                            title: "Two-Out RBI", 
+                            description: "Clutch hitting with two outs and RISP",
+                            completed: false, 
+                            locked: true,
+                            duration: "12 min"
+                        },
+                        { 
+                            step: 4, 
+                            title: "Pressure Situations", 
+                            description: "Perform under high-pressure moments",
+                            completed: false, 
+                            locked: true,
+                            duration: "7 min"
+                        },
+                        { 
+                            step: 5, 
+                            title: "Clutch Performance", 
+                            description: "Late-inning situational hitting",
+                            completed: false, 
+                            locked: true,
+                            duration: "3 min"
+                        }
+                    ],
+                    image: "https://placehold.co/120x122"
+                }
+            ];
+
+            return (
+                <div className="w-full h-full bg-neutral-100 flex flex-col">
+                    <div className="flex-1 bg-neutral-100 flex flex-col justify-start items-start">
+                        {/* Device Header */}
+                        <div className="w-full px-5 py-3 inline-flex justify-between items-center">
+                            <div className="w-8 inline-flex flex-col justify-center items-center gap-2.5">
+                                <div className="self-stretch h-9 px-3 py-2 inline-flex justify-center items-center gap-2 overflow-hidden">
+                                    <div className="w-5 h-5 relative overflow-hidden">
+                                        <img 
+                                            src="public/icons/settings.png" 
+                                            alt="Settings" 
+                                            width="20" 
+                                            height="20" 
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="h-9 p-1 rounded-[200px] flex justify-start items-center gap-2">
+                                <div className="w-6 h-6 bg-green-500 rounded-[500px] outline outline-2 outline-offset-[-2px] outline-blue-600 inline-flex flex-col justify-center items-center">
+                                    <img 
+                                        src="public/icons/device connection.png" 
+                                        alt="Device Connection" 
+                                        width="12" 
+                                        height="12" 
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Main Content */}
+                        <div className="self-stretch flex-1 px-5 pb-6 bg-neutral-100 flex flex-col justify-start items-start gap-3 overflow-y-auto">
+                            <div className="self-stretch flex flex-col justify-start items-start gap-3">
+                                <div className="self-stretch pt-4 pb-2 inline-flex justify-start items-center">
+                                    <div className="text-center justify-center text-neutral-900 text-4xl font-extrabold font-acumin uppercase leading-9">practice</div>
+                                </div>
+                                <div className="self-stretch p-0.5 bg-zinc-200 inline-flex justify-start items-center">
+                                    <div 
+                                        className={`flex-1 px-2.5 py-1 flex justify-center items-center gap-2.5 cursor-pointer ${
+                                            activeSegment === 'drills' ? 'bg-white' : ''
+                                        }`}
+                                        onClick={() => setActiveSegment('drills')}
+                                    >
+                                        <div className={`justify-start text-xs font-medium font-barlow leading-tight ${
+                                            activeSegment === 'drills' ? 'text-blue-600' : 'text-gray-600'
+                                        }`}>Drills</div>
+                                    </div>
+                                    <div 
+                                        className={`flex-1 px-2.5 py-1 flex justify-center items-center gap-2.5 cursor-pointer ${
+                                            activeSegment === 'ladders' ? 'bg-white' : ''
+                                        }`}
+                                        onClick={() => setActiveSegment('ladders')}
+                                    >
+                                        <div className={`justify-start text-xs font-medium font-barlow leading-tight ${
+                                            activeSegment === 'ladders' ? 'text-blue-600' : 'text-gray-600'
+                                        }`}>Ladders</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Content based on active segment */}
+                            {activeSegment === 'drills' ? (
+                                /* Practice Drill Cards */
+                                practiceData.map((item) => (
+                                    <div key={item.id} className="self-stretch flex flex-col justify-start items-start gap-4">
+                                        <div className="w-full bg-white shadow-[0px_2px_5px_-2px_rgba(10,9,11,0.06)] shadow-[0px_2px_7px_0px_rgba(10,9,11,0.03)] shadow-[0px_0px_0px_1px_rgba(10,9,11,0.04)] inline-flex justify-start items-center gap-3 overflow-hidden">
+                                            <img className="w-28 self-stretch object-cover" src={item.image} alt={item.title} />
+                                            <div className="flex-1 pr-2.5 py-2.5 inline-flex flex-col justify-start items-start gap-3">
+                                                <div className="self-stretch flex flex-col justify-start items-start gap-2">
+                                                    <div className="self-stretch inline-flex justify-between items-center">
+                                                        <div className="flex-1 inline-flex flex-col justify-start items-start gap-0.5">
+                                                            <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight uppercase tracking-wide">DRILL</div>
+                                                            <div className="self-stretch justify-start text-neutral-900 text-base font-semibold font-barlow leading-tight">{item.title}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="self-stretch inline-flex justify-start items-center gap-1.5">
+                                                        <div className="inline-flex flex-col justify-start items-start gap-2.5">
+                                                            <div className="px-2 pt-0.5 pb-[3px] bg-green-100 rounded-md inline-flex justify-center items-center gap-1">
+                                                                <div className="justify-start text-green-600 text-xs font-medium font-barlow leading-tight">{item.category}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-[3.37px] self-stretch pt-[3px] inline-flex flex-col justify-center items-start gap-2.5">
+                                                            <div className="w-[3.37px] h-[3.36px] bg-gray-600" />
+                                                        </div>
+                                                        <div className="justify-start text-gray-600 text-sm font-medium font-barlow leading-snug">{item.description}</div>
+                                                    </div>
+                                                </div>
+                                                <div className="inline-flex justify-start items-start gap-2">
+                                                    <div className="flex justify-start items-center gap-1">
+                                                        <div className="w-4 h-4 relative overflow-hidden">
+                                                            <div className="w-3 h-3 left-[2.70px] top-[3.49px] absolute bg-gray-600" />
+                                                        </div>
+                                                        <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight">{item.difficulty}</div>
+                                                    </div>
+                                                    <div className="flex justify-start items-center gap-1">
+                                                        <div className="w-4 h-4 relative overflow-hidden">
+                                                            <img 
+                                                                src="public/icons/Clock Icon.png" 
+                                                                alt="Duration" 
+                                                                width="12" 
+                                                                height="12" 
+                                                            />
+                                                        </div>
+                                                        <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight">{item.duration}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                /* Ladder Cards */
+                                laddersData.map((ladder) => (
+                                    <div key={ladder.id} className="self-stretch flex flex-col justify-start items-start gap-4">
+                                        <div className="w-full bg-white shadow-[0px_2px_5px_-2px_rgba(10,9,11,0.06)] shadow-[0px_2px_7px_0px_rgba(10,9,11,0.03)] shadow-[0px_0px_0px_1px_rgba(10,9,11,0.04)] flex flex-col gap-3 overflow-hidden">
+                                            {/* Header with image and info */}
+                                            <div className="inline-flex justify-start items-center gap-3">
+                                                <img className="w-28 h-28 object-cover" src={ladder.image} alt={ladder.title} />
+                                                <div className="flex-1 pr-2.5 py-2.5 inline-flex flex-col justify-start items-start gap-2">
+                                                    <div className="self-stretch flex flex-col justify-start items-start gap-1">
+                                                        <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight uppercase tracking-wide">LADDER</div>
+                                                        <div className="self-stretch justify-start text-neutral-900 text-base font-semibold font-barlow leading-tight">{ladder.title}</div>
+                                                        <div className="justify-start text-gray-600 text-sm font-light font-barlow leading-snug">{ladder.description}</div>
+                                                    </div>
+                                                    <div className="inline-flex justify-start items-center gap-1.5">
+                                                        <div className="inline-flex flex-col justify-start items-start gap-2.5">
+                                                            <div className="px-2 pt-0.5 pb-[3px] bg-blue-100 rounded-md inline-flex justify-center items-center gap-1">
+                                                                <div className="justify-start text-blue-600 text-xs font-medium font-barlow leading-tight">{ladder.category}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-[3.37px] self-stretch pt-[3px] inline-flex flex-col justify-center items-start gap-2.5">
+                                                            <div className="w-[3.37px] h-[3.36px] bg-gray-600" />
+                                                        </div>
+                                                        <div className="justify-start text-gray-600 text-sm font-light font-barlow leading-snug">
+                                                            <img 
+                                                                src="public/icons/Clock Icon.png" 
+                                                                alt="Duration" 
+                                                                width="12" 
+                                                                height="12" 
+                                                                className="inline mr-1"
+                                                            />
+                                                            {ladder.estimatedTime}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Progress steps */}
+                                            <div className="px-3 pb-3 flex flex-col gap-3">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="text-gray-700 text-sm font-semibold font-barlow">Progress Steps</div>
+                                                    <div className="text-gray-600 text-xs font-light font-barlow">
+                                                        {ladder.steps.filter(s => s.completed).length}/{ladder.totalSteps} Complete
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-col gap-2">
+                                                    {ladder.steps.map((step) => (
+                                                        <div key={step.step} className="flex items-center gap-3">
+                                                            <div className={`w-8 h-8 flex items-center justify-center text-xs font-bold rounded-full ${
+                                                                step.completed ? 'bg-green-500 text-white' : 
+                                                                step.locked ? 'bg-gray-200 text-gray-400' : 'bg-blue-500 text-white'
+                                                            }`}>
+                                                                {step.completed ? '✓' : step.step}
+                                                            </div>
+                                                            <div className="flex-1 flex flex-col">
+                                                                <div className={`text-sm font-semibold font-barlow ${
+                                                                    step.completed ? 'text-green-700' : 
+                                                                    step.locked ? 'text-gray-400' : 'text-gray-700'
+                                                                }`}>
+                                                                    {step.title}
+                                                                </div>
+                                                                <div className={`text-xs font-light font-barlow ${
+                                                                    step.completed ? 'text-green-600' : 
+                                                                    step.locked ? 'text-gray-400' : 'text-gray-600'
+                                                                }`}>
+                                                                    {step.description}
+                                                                </div>
+                                                            </div>
+                                                            <div className={`text-xs font-light font-barlow ${
+                                                                step.completed ? 'text-green-600' : 
+                                                                step.locked ? 'text-gray-400' : 'text-blue-600'
+                                                            }`}>
+                                                                {step.duration}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                {/* Next step indicator */}
+                                                {!ladder.completed && (
+                                                    <div className="mt-2 p-2 bg-blue-50 rounded-md">
+                                                        <div className="text-sm font-semibold font-barlow text-blue-700">
+                                                            Next: {ladder.steps.find(s => !s.completed && !s.locked)?.title || 'Complete current step'}
+                                                        </div>
+                                                        <div className="text-xs font-light font-barlow text-blue-600">
+                                                            {ladder.steps.find(s => !s.completed && !s.locked)?.description || 'Finish the current step to unlock the next one'}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component
+        const MobileBaseballApp = () => {
+            const [activeTab, setActiveTab] = useState('home');
+            const [isLoading, setIsLoading] = useState(true);
+
+            const handleQuickStatsViewAll = () => {
+                setActiveTab('performance');
+            };
+
+            const player = {
+                name: "BRIAN PAGE",
+                position: "SP / OF",
+                avatar: "public/Profile.jpg",
+                hitCounter: 1250,
+                swingStreak: 7,
+                batThrow: "L/L"
+            };
+
+            const quickStats = [
+                { label: "Consistency", value: 84, unit: "%" },
+                { label: "Avg. Bat Speed", value: 72, unit: "MPH" },
+                { label: "Avg. Exit Velo", value: 87, unit: "mph" },
+                { label: "Launch Angle", value: 23, unit: "°" }
+            ];
+
+            const weeklyActivity = [
+                { day: "Sunday", value: 12, shortDay: "Sun" },
+                { day: "Monday", value: 34, shortDay: "Mon" },
+                { day: "Tuesday", value: 5, shortDay: "Tue" },
+                { day: "Wednesday", value: 125, shortDay: "Wed" },
+                { day: "Thursday", value: 675, shortDay: "Thu" },
+                { day: "Friday", value: 14, shortDay: "Fri" },
+                { day: "Saturday", value: 142, shortDay: "Sat" }
+            ];
+
+            const drills = [
+                {
+                    id: "1",
+                    title: "Launch Angle",
+                    category: "Game Situations",
+                    difficulty: "Beginner",
+                    duration: "15 min",
+                    image: "https://placehold.co/120x120"
+                },
+                {
+                    id: "2",
+                    title: "Game Sim Challenge",
+                    category: "Game Situations",
+                    difficulty: "Intermediate",
+                    duration: "20 min",
+                    image: "https://placehold.co/120x120"
+                },
+                {
+                    id: "3",
+                    title: "Power Hitting",
+                    category: "Strength Training",
+                    difficulty: "Advanced",
+                    duration: "25 min",
+                    image: "https://placehold.co/120x120"
+                },
+                {
+                    id: "4",
+                    title: "Speed Training",
+                    category: "Conditioning",
+                    difficulty: "Intermediate",
+                    duration: "18 min",
+                    image: "https://placehold.co/120x120"
+                }
+            ];
+
+            const sessions = [
+                {
+                    id: "1",
+                    title: "Free Practice",
+                    swings: 124,
+                    participants: ["Alex T.", "Jamie R.", "Taylor S."],
+                    date: "June 21, 2025",
+                    duration: "12 min 35 sec"
+                },
+                {
+                    id: "2",
+                    title: "Velocity Ladder",
+                    swings: 43,
+                    participants: ["Alex T.", "Morgan K."],
+                    date: "June 21, 2025",
+                    duration: "8 min 22 sec"
+                },
+                {
+                    id: "3",
+                    title: "Team Scrimmage",
+                    swings: 89,
+                    participants: ["Alex T.", "Jamie R.", "Casey L.", "Jordan M."],
+                    date: "June 20, 2025",
+                    duration: "25 min 12 sec"
+                },
+                {
+                    id: "4",
+                    title: "Batting Practice",
+                    swings: 67,
+                    participants: ["Sam P.", "Riley W."],
+                    date: "June 19, 2025",
+                    duration: "15 min 45 sec"
+                }
+            ];
+
+
+
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    setIsLoading(false);
+                }, 2000);
+                return () => clearTimeout(timer);
+            }, []);
+
+            if (isLoading) {
+                return (
+                    <div className="w-96 min-h-screen bg-gradient-to-b from-indigo-500/20 to-neutral-100 flex flex-col items-center justify-center gap-6">
+                        <div className="relative">
+                            <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center">
+                                <div className="text-4xl">⚾</div>
+                            </div>
+                            <div className="absolute inset-0 border-4 border-transparent border-t-blue-500 rounded-2xl animate-spin" />
+                        </div>
+                        
+                        <div className="text-center">
+                            <h1 className="text-white text-2xl font-bold font-roboto-condensed">MLM DS</h1>
+                            <p className="text-white/80 text-sm font-medium font-barlow mt-1">Baseball Training App</p>
+                        </div>
+                        
+                        <div className="flex gap-2">
+                            {[0, 1, 2].map((index) => (
+                                <div
+                                    key={index}
+                                    className="w-3 h-3 bg-white rounded-full animate-bounce"
+                                    style={{ animationDelay: `${index * 0.2}s` }}
+                                />
+                            ))}
+                        </div>
+                        
+                        <span className="text-white/60 text-sm font-medium">Loading your stats...</span>
+                    </div>
+                );
+            }
+
+            // Render different pages based on activeTab
+            if (activeTab === 'practice') {
+                return (
+                    <div className="mobile-app ios-app-container bg-neutral-100">
+                        <div className="ios-content-area">
+                            <PracticePage />
+                        </div>
+                        <div className="ios-sticky-nav safe-area-bottom">
+                            <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="mobile-app ios-app-container bg-neutral-100">
+                    <div className="ios-content-area">
+                        <div className="flex flex-col gap-7" style={{ background: 'linear-gradient(0deg, rgba(102, 130, 215, 0.10) 0%, rgba(102, 130, 215, 0.10) 100%), linear-gradient(312deg, #64CBFF -7.45%, #2B73DF 69.41%)' }}>
+                            <DeviceHeader />
+                            <PlayerProfile player={player} />
+                        </div>
+
+                        <main className="flex-1 flex flex-col gap-2 pb-6">
+                        <QuickStats stats={quickStats} onViewAll={handleQuickStatsViewAll} />
+                        <WeeklyActivity data={weeklyActivity} />
+                        
+                                                    {/* Recommended Practice Section */}
+                            <section className="pl-5 pr-0 pt-5 flex flex-col gap-3 section-container relative">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-neutral-900 text-base font-medium font-barlow">Recommended Practice</h2>
+                                    <button className="text-blue-600 text-sm font-medium btn-hover">View All</button>
+                                </div>
+                                <div className="flex gap-3 overflow-x-auto pb-2 horizontal-scroll scroll-container pr-5">
+                                {drills.map((drill) => (
+                                    <DrillCard key={drill.id} drill={drill} />
+                                ))}
+                            </div>
+                            <div className="swipe-indicator">Swipe →</div>
+                        </section>
+
+                                                    {/* Recent Sessions Section */}
+                            <section className="pl-5 pr-0 pt-5 flex flex-col gap-3 section-container relative">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-neutral-900 text-base font-medium font-barlow">Recent Sessions</h2>
+                                    <button className="text-blue-600 text-sm font-medium btn-hover">View All</button>
+                                </div>
+                                <div className="flex gap-3 overflow-x-auto pb-2 horizontal-scroll scroll-container pr-5">
+                                {sessions.map((session) => (
+                                    <SessionCard key={session.id} session={session} />
+                                ))}
+                            </div>
+                            <div className="swipe-indicator">Swipe →</div>
+                        </section>
+
+
+                    </main>
+                    </div>
+
+                    <div className="ios-sticky-nav safe-area-bottom">
+                        <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+                    </div>
+                </div>
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(<MobileBaseballApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

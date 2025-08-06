@@ -1,0 +1,26 @@
+{
+  "name": "MLM DS - Baseball Training App",
+  "short_name": "MLM DS",
+  "description": "Professional baseball training and analytics mobile application",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#6366f1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "fitness", "productivity"],
+  "lang": "en-US"
+}
