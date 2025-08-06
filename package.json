@@ -1,38 +1,38 @@
 {
-  "name": "mobile-baseball-app",
+  "name": "baseball-training-mobile-app",
   "version": "1.0.0",
-  "description": "A React mobile baseball training app with TypeScript and Tailwind CSS",
-  "main": "index.js",
+  "description": "Mobile baseball training app with practice drills, performance tracking, and ladder-based skill progression",
+  "main": "index.html",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "next": "^14.0.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
-    "tailwindcss": "^3.3.0",
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0",
-    "eslint": "^8.0.0",
-    "eslint-config-next": "^14.0.0"
+    "start": "python3 -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "npx live-server --port=3000",
+    "open": "open index.html"
   },
   "keywords": [
-    "react",
-    "typescript",
-    "tailwind",
-    "mobile",
     "baseball",
-    "sports-app"
+    "training",
+    "mobile-app",
+    "react",
+    "tailwind-css",
+    "sports",
+    "drills",
+    "performance-tracking",
+    "ios-design",
+    "practice-ladders"
   ],
-  "author": "",
-  "license": "MIT"
+  "author": "Sertac Tuncel",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/baseball-training-mobile-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/baseball-training-mobile-app/issues"
+  },
+  "homepage": "https://YOUR_USERNAME.github.io/baseball-training-mobile-app/",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  }
 }
