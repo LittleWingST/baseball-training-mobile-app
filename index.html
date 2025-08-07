@@ -1383,6 +1383,8 @@
         // Games Page Component
         const GamesPage = () => {
             const [activeSegment, setActiveSegment] = useState('games');
+            const [selectedGameFilter, setSelectedGameFilter] = useState('all');
+            const [selectedAchievementFilter, setSelectedAchievementFilter] = useState('all');
 
             // Games data including HR Derby
             const gamesData = [
@@ -1395,6 +1397,9 @@
                     duration: "5-10 min",
                     xpReward: 150,
                     players: "1-4",
+                    suggestedPlayers: 2,
+                    bestScore: 24,
+                    scoreUnit: "HR",
                     image: "https://placehold.co/120x122",
                     status: "available"
                 },
@@ -1407,6 +1412,9 @@
                     duration: "3-8 min",
                     xpReward: 100,
                     players: "1-2",
+                    suggestedPlayers: 1,
+                    bestScore: 950,
+                    scoreUnit: "pts",
                     image: "https://placehold.co/120x122",
                     status: "available"
                 },
@@ -1419,6 +1427,9 @@
                     duration: "8-15 min",
                     xpReward: 200,
                     players: "1-2",
+                    suggestedPlayers: 1,
+                    bestScore: null,
+                    scoreUnit: "pts",
                     image: "https://placehold.co/120x122",
                     status: "locked"
                 },
@@ -1431,6 +1442,9 @@
                     duration: "2-5 min",
                     xpReward: 120,
                     players: "1-4",
+                    suggestedPlayers: 2,
+                    bestScore: 156,
+                    scoreUnit: "pts",
                     image: "https://placehold.co/120x122",
                     status: "available"
                 },
@@ -1443,6 +1457,9 @@
                     duration: "10-20 min",
                     xpReward: 180,
                     players: "2-4",
+                    suggestedPlayers: 4,
+                    bestScore: 1875,
+                    scoreUnit: "pts",
                     image: "https://placehold.co/120x122",
                     status: "available"
                 }
@@ -1530,6 +1547,101 @@
                 level: 12
             };
 
+            // Leaderboard data
+            const leaderboardData = [
+                {
+                    id: "1",
+                    rank: 1,
+                    player: "Alex Thunder",
+                    level: 15,
+                    totalXP: 4250,
+                    avatar: "https://placehold.co/40x40",
+                    gameScores: {
+                        "hr-derby": 32,
+                        "target-practice": 1200,
+                        "speed-round": 245,
+                        "team-challenge": 2150,
+                        "pressure-cooker": 850
+                    }
+                },
+                {
+                    id: "2",
+                    rank: 2,
+                    player: "Sarah Lightning",
+                    level: 14,
+                    totalXP: 3890,
+                    avatar: "https://placehold.co/40x40",
+                    gameScores: {
+                        "hr-derby": 28,
+                        "target-practice": 1150,
+                        "speed-round": 220,
+                        "team-challenge": 2050,
+                        "pressure-cooker": 780
+                    }
+                },
+                {
+                    id: "3",
+                    rank: 3,
+                    player: "Mike Power",
+                    level: 13,
+                    totalXP: 3456,
+                    avatar: "https://placehold.co/40x40",
+                    gameScores: {
+                        "hr-derby": 35,
+                        "target-practice": 980,
+                        "speed-round": 190,
+                        "team-challenge": 1980,
+                        "pressure-cooker": 720
+                    }
+                },
+                {
+                    id: "4",
+                    rank: 4,
+                    player: "BRIAN PAGE",
+                    level: 12,
+                    totalXP: 2750,
+                    avatar: "public/Profile.jpg",
+                    gameScores: {
+                        "hr-derby": 24,
+                        "target-practice": 950,
+                        "speed-round": 156,
+                        "team-challenge": 1875,
+                        "pressure-cooker": null
+                    },
+                    isCurrentUser: true
+                },
+                {
+                    id: "5",
+                    rank: 5,
+                    player: "Jessica Speed",
+                    level: 12,
+                    totalXP: 2690,
+                    avatar: "https://placehold.co/40x40",
+                    gameScores: {
+                        "hr-derby": 22,
+                        "target-practice": 890,
+                        "speed-round": 280,
+                        "team-challenge": 1750,
+                        "pressure-cooker": 650
+                    }
+                },
+                {
+                    id: "6",
+                    rank: 6,
+                    player: "David Clutch",
+                    level: 11,
+                    totalXP: 2450,
+                    avatar: "https://placehold.co/40x40",
+                    gameScores: {
+                        "hr-derby": 20,
+                        "target-practice": 870,
+                        "speed-round": 175,
+                        "team-challenge": 1650,
+                        "pressure-cooker": 920
+                    }
+                }
+            ];
+
             return (
                 <div className="w-full h-full bg-neutral-100 flex flex-col">
                     <div className="flex-1 bg-neutral-100 flex flex-col justify-start items-start">
@@ -1550,19 +1662,18 @@
                                     <div className="text-center justify-center text-neutral-900 text-4xl font-extrabold font-acumin uppercase leading-9">games</div>
                                 </div>
                                 {/* Player XP Display */}
-                                <div className="self-stretch p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex justify-between items-center">
+                                <div className="self-stretch p-3 flex justify-between items-center" style={{ background: 'linear-gradient(0deg, rgba(102, 130, 215, 0.10) 0%, rgba(102, 130, 215, 0.10) 100%), linear-gradient(312deg, #64CBFF -7.45%, #2B73DF 69.41%)' }}>
                                     <div className="flex flex-col">
                                         <div className="text-white text-sm font-semibold font-barlow">Level {playerXP.level}</div>
                                         <div className="text-white/80 text-xs font-light font-barlow">{playerXP.current} / {playerXP.nextLevel} XP</div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-16 h-2 bg-white/20 rounded-full overflow-hidden">
+                                    <div className="flex-1 ml-4">
+                                        <div className="w-full h-2 bg-white/20 overflow-hidden">
                                             <div 
-                                                className="h-full bg-yellow-400 rounded-full transition-all duration-500"
+                                                className="h-full bg-yellow-400 transition-all duration-500"
                                                 style={{ width: `${(playerXP.current / playerXP.nextLevel) * 100}%` }}
                                             />
                                         </div>
-                                        <div className="text-white text-lg font-bold">⭐</div>
                                     </div>
                                 </div>
                                 {/* Segmented Control */}
@@ -1586,6 +1697,16 @@
                                         <div className={`justify-start text-xs font-medium font-barlow leading-tight ${
                                             activeSegment === 'achievements' ? 'text-blue-600' : 'text-gray-600'
                                         }`}>Achievements</div>
+                                    </div>
+                                    <div 
+                                        className={`flex-1 px-2.5 py-1 flex justify-center items-center gap-2.5 cursor-pointer ${
+                                            activeSegment === 'leaderboard' ? 'bg-white' : ''
+                                        }`}
+                                        onClick={() => setActiveSegment('leaderboard')}
+                                    >
+                                        <div className={`justify-start text-xs font-medium font-barlow leading-tight ${
+                                            activeSegment === 'leaderboard' ? 'text-blue-600' : 'text-gray-600'
+                                        }`}>Leaderboard</div>
                                     </div>
                                 </div>
                             </div>
@@ -1612,21 +1733,22 @@
                                                         </div>
                                                         <div className="flex flex-col items-end gap-1">
                                                             <div className="flex items-center gap-1">
-                                                                <div className="text-yellow-500 text-sm">⭐</div>
                                                                 <div className="text-gray-700 text-sm font-semibold font-barlow">{game.xpReward} XP</div>
                                                             </div>
+                                                            {game.bestScore && (
+                                                                <div className="text-green-600 text-xs font-medium font-barlow">
+                                                                    Best: {game.bestScore} {game.scoreUnit}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
-                                                    <div className="self-stretch inline-flex justify-start items-center gap-1.5">
-                                                        <div className="inline-flex flex-col justify-start items-start gap-2.5">
+                                                    <div className="self-stretch flex flex-col gap-1">
+                                                        <div className="inline-flex items-center gap-1.5">
                                                             <div className="px-2 pt-0.5 pb-[3px] bg-purple-100 rounded-md inline-flex justify-center items-center gap-1">
                                                                 <div className="justify-start text-purple-600 text-xs font-medium font-barlow leading-tight">{game.category}</div>
                                                             </div>
                                                         </div>
-                                                        <div className="w-[3.37px] self-stretch pt-[3px] inline-flex flex-col justify-center items-start gap-2.5">
-                                                            <div className="w-[3.37px] h-[3.36px] bg-gray-600" />
-                                                        </div>
-                                                        <div className="justify-start text-gray-600 text-sm font-medium font-barlow leading-snug">{game.description}</div>
+                                                        <div className="justify-start text-gray-600 text-sm font-light font-barlow leading-snug">{game.description}</div>
                                                     </div>
                                                 </div>
                                                 <div className="inline-flex justify-start items-start gap-3">
@@ -1646,14 +1768,14 @@
                                                         <div className="w-4 h-4 relative overflow-hidden">
                                                             <img src="public/icons/home.png" alt="Players" width="12" height="12" />
                                                         </div>
-                                                        <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight">{game.players} players</div>
+                                                        <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight">Suggested: {game.suggestedPlayers}</div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 ))
-                            ) : (
+                            ) : activeSegment === 'achievements' ? (
                                 /* Achievement Cards */
                                 <>
                                     <div className="self-stretch flex justify-between items-center">
@@ -1662,7 +1784,60 @@
                                             {achievementsData.filter(a => a.completed).length}/{achievementsData.length} Complete
                                         </div>
                                     </div>
-                                    {achievementsData.map((achievement) => (
+                                    {/* Achievement Filter */}
+                                    <div className="self-stretch flex gap-2 overflow-x-auto pb-2">
+                                        <button 
+                                            onClick={() => setSelectedAchievementFilter('all')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedAchievementFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            All
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedAchievementFilter('Power')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedAchievementFilter === 'Power' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Power
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedAchievementFilter('Precision')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedAchievementFilter === 'Precision' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Precision
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedAchievementFilter('Speed')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedAchievementFilter === 'Speed' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Speed
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedAchievementFilter('Mental')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedAchievementFilter === 'Mental' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Mental
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedAchievementFilter('Social')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedAchievementFilter === 'Social' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Social
+                                        </button>
+                                    </div>
+                                    {achievementsData.filter(achievement => 
+                                        selectedAchievementFilter === 'all' || achievement.category === selectedAchievementFilter
+                                    ).map((achievement) => (
                                         <div key={achievement.id} className="self-stretch flex flex-col justify-start items-start gap-4">
                                             <div className={`w-full bg-white shadow-[0px_2px_5px_-2px_rgba(10,9,11,0.06)] shadow-[0px_2px_7px_0px_rgba(10,9,11,0.03)] shadow-[0px_0px_0px_1px_rgba(10,9,11,0.04)] p-4 flex flex-col gap-3 overflow-hidden ${achievement.completed ? 'border-l-4 border-green-500' : ''}`}>
                                                 {/* Header */}
@@ -1721,6 +1896,116 @@
                                         </div>
                                     ))}
                                 </>
+                            ) : (
+                                /* Leaderboard */
+                                <>
+                                    <div className="self-stretch flex justify-between items-center">
+                                        <div className="text-gray-700 text-sm font-semibold font-barlow">Rankings</div>
+                                        <div className="text-gray-600 text-xs font-light font-barlow">
+                                            Your Rank: #{leaderboardData.find(p => p.isCurrentUser)?.rank || 'N/A'}
+                                        </div>
+                                    </div>
+                                    {/* Game Filter */}
+                                    <div className="self-stretch flex gap-2 overflow-x-auto pb-2">
+                                        <button 
+                                            onClick={() => setSelectedGameFilter('all')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedGameFilter === 'all' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Overall
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedGameFilter('hr-derby')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedGameFilter === 'hr-derby' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            HR Derby
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedGameFilter('target-practice')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedGameFilter === 'target-practice' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Target Practice
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedGameFilter('speed-round')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedGameFilter === 'speed-round' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Speed Round
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedGameFilter('team-challenge')}
+                                            className={`px-3 py-1 text-xs font-medium font-barlow leading-tight whitespace-nowrap ${
+                                                selectedGameFilter === 'team-challenge' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                                            } btn-hover`}
+                                        >
+                                            Team Challenge
+                                        </button>
+                                    </div>
+                                    {/* Leaderboard List */}
+                                    {leaderboardData.map((player) => {
+                                        const scoreToShow = selectedGameFilter === 'all' ? player.totalXP : player.gameScores[selectedGameFilter];
+                                        const gameData = gamesData.find(g => g.id === selectedGameFilter);
+                                        const scoreUnit = selectedGameFilter === 'all' ? 'XP' : (gameData?.scoreUnit || 'pts');
+                                        
+                                        return (
+                                            <div key={player.id} className="self-stretch flex flex-col justify-start items-start gap-4">
+                                                <div className={`w-full bg-white shadow-[0px_2px_5px_-2px_rgba(10,9,11,0.06)] shadow-[0px_2px_7px_0px_rgba(10,9,11,0.03)] shadow-[0px_0px_0px_1px_rgba(10,9,11,0.04)] p-4 flex items-center gap-3 overflow-hidden ${player.isCurrentUser ? 'border-l-4 border-blue-500 bg-blue-50' : ''}`}>
+                                                    {/* Rank */}
+                                                    <div className={`w-8 h-8 flex items-center justify-center text-sm font-bold font-barlow ${
+                                                        player.rank === 1 ? 'bg-yellow-500 text-white' :
+                                                        player.rank === 2 ? 'bg-gray-400 text-white' :
+                                                        player.rank === 3 ? 'bg-orange-400 text-white' :
+                                                        'bg-gray-200 text-gray-700'
+                                                    }`}>
+                                                        {player.rank}
+                                                    </div>
+                                                    
+                                                    {/* Avatar */}
+                                                    <img 
+                                                        className="w-10 h-10 rounded-full object-cover" 
+                                                        src={player.avatar} 
+                                                        alt={player.player}
+                                                    />
+                                                    
+                                                    {/* Player Info */}
+                                                    <div className="flex-1 flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className={`text-base font-semibold font-barlow ${player.isCurrentUser ? 'text-blue-700' : 'text-neutral-900'}`}>
+                                                                {player.player}
+                                                            </div>
+                                                            {player.isCurrentUser && (
+                                                                <div className="px-2 py-0.5 bg-blue-600 text-white text-xs font-medium font-barlow">YOU</div>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-gray-600 text-sm font-light font-barlow">
+                                                            Level {player.level} • {player.totalXP} Total XP
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Score */}
+                                                    <div className="flex flex-col items-end gap-1">
+                                                        {scoreToShow !== null ? (
+                                                            <div className="text-lg font-extrabold font-acumin text-neutral-900">
+                                                                {scoreToShow} {scoreUnit}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="text-sm font-medium font-barlow text-gray-500">
+                                                                Not Played
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </>
                             )}
                         </div>
 
@@ -1730,7 +2015,9 @@
                                 <div className="self-stretch flex flex-col justify-center items-center gap-2.5">
                                     <div className="self-stretch h-12 px-6 py-3 bg-purple-600 inline-flex justify-center items-center gap-4 overflow-hidden btn-hover">
                                         <div className="text-center justify-center text-white text-base font-semibold font-barlow uppercase leading-snug tracking-wide">
-                                            {activeSegment === 'games' ? 'Start Game' : 'View All Achievements'}
+                                            {activeSegment === 'games' ? 'Start Game' : 
+                                             activeSegment === 'achievements' ? 'View All Achievements' : 
+                                             'View Profile'}
                                         </div>
                                     </div>
                                 </div>
