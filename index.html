@@ -1662,18 +1662,18 @@
                                     <div className="text-center justify-center text-neutral-900 text-4xl font-extrabold font-acumin uppercase leading-9">games</div>
                                 </div>
                                 {/* Player XP Display */}
-                                <div className="self-stretch p-3 flex justify-between items-center" style={{ background: 'linear-gradient(0deg, rgba(102, 130, 215, 0.10) 0%, rgba(102, 130, 215, 0.10) 100%), linear-gradient(312deg, #64CBFF -7.45%, #2B73DF 69.41%)' }}>
-                                    <div className="flex flex-col">
-                                        <div className="text-white text-sm font-semibold font-barlow">Level {playerXP.level}</div>
-                                        <div className="text-white/80 text-xs font-light font-barlow">{playerXP.current} / {playerXP.nextLevel} XP</div>
-                                    </div>
-                                    <div className="flex-1 ml-4">
-                                        <div className="w-full h-2 bg-white/20 overflow-hidden">
-                                            <div 
-                                                className="h-full bg-yellow-400 transition-all duration-500"
-                                                style={{ width: `${(playerXP.current / playerXP.nextLevel) * 100}%` }}
-                                            />
+                                <div className="self-stretch p-3 flex flex-col gap-2" style={{ background: 'linear-gradient(0deg, rgba(102, 130, 215, 0.10) 0%, rgba(102, 130, 215, 0.10) 100%), linear-gradient(312deg, #64CBFF -7.45%, #2B73DF 69.41%)' }}>
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex flex-col">
+                                            <div className="text-white text-sm font-semibold font-barlow">Level {playerXP.level}</div>
+                                            <div className="text-white/80 text-xs font-light font-barlow">{playerXP.current} / {playerXP.nextLevel} XP</div>
                                         </div>
+                                    </div>
+                                    <div className="w-full h-2 bg-white/20 overflow-hidden">
+                                        <div 
+                                            className="h-full bg-yellow-400 transition-all duration-500"
+                                            style={{ width: `${(playerXP.current / playerXP.nextLevel) * 100}%` }}
+                                        />
                                     </div>
                                 </div>
                                 {/* Segmented Control */}
@@ -1716,13 +1716,12 @@
                                 /* Game Cards */
                                 gamesData.map((game) => (
                                     <div key={game.id} className="self-stretch flex flex-col justify-start items-start gap-4">
-                                        <div className={`w-full bg-white shadow-[0px_2px_5px_-2px_rgba(10,9,11,0.06)] shadow-[0px_2px_7px_0px_rgba(10,9,11,0.03)] shadow-[0px_0px_0px_1px_rgba(10,9,11,0.04)] inline-flex justify-start items-center gap-3 overflow-hidden ${game.status === 'locked' ? 'opacity-60' : ''}`}>
-                                            <img className="w-28 self-stretch object-cover" src={game.image} alt={game.title} />
+                                        <div className={`w-full bg-white shadow-[0px_2px_5px_-2px_rgba(10,9,11,0.06)] shadow-[0px_2px_7px_0px_rgba(10,9,11,0.03)] shadow-[0px_0px_0px_1px_rgba(10,9,11,0.04)] inline-flex justify-start items-center gap-3 overflow-hidden max-h-[120px] ${game.status === 'locked' ? 'opacity-60' : ''}`}>
+                                            <img className="w-[120px] h-[120px] object-cover flex-shrink-0" src={game.image} alt={game.title} />
                                             <div className="flex-1 pr-2.5 py-2.5 inline-flex flex-col justify-start items-start gap-3">
                                                 <div className="self-stretch flex flex-col justify-start items-start gap-2">
                                                     <div className="self-stretch inline-flex justify-between items-center">
                                                         <div className="flex-1 inline-flex flex-col justify-start items-start gap-0.5">
-                                                            <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight uppercase tracking-wide">GAME</div>
                                                             <div className="self-stretch justify-start text-neutral-900 text-base font-semibold font-barlow leading-tight">{game.title}</div>
                                                             {game.status === 'locked' && (
                                                                 <div className="flex items-center gap-1">
@@ -1748,7 +1747,7 @@
                                                                 <div className="justify-start text-purple-600 text-xs font-medium font-barlow leading-tight">{game.category}</div>
                                                             </div>
                                                         </div>
-                                                        <div className="justify-start text-gray-600 text-sm font-light font-barlow leading-snug">{game.description}</div>
+                                                        <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-snug">{game.description}</div>
                                                     </div>
                                                 </div>
                                                 <div className="inline-flex justify-start items-start gap-3">
@@ -1763,12 +1762,6 @@
                                                             <img src="public/icons/Clock Icon.png" alt="Duration" width="12" height="12" />
                                                         </div>
                                                         <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight">{game.duration}</div>
-                                                    </div>
-                                                    <div className="flex justify-start items-center gap-1">
-                                                        <div className="w-4 h-4 relative overflow-hidden">
-                                                            <img src="public/icons/home.png" alt="Players" width="12" height="12" />
-                                                        </div>
-                                                        <div className="justify-start text-gray-600 text-xs font-light font-barlow leading-tight">Suggested: {game.suggestedPlayers}</div>
                                                     </div>
                                                 </div>
                                             </div>
